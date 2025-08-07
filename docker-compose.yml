@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  redis-stack:
+    image: redis/redis-stack-server:latest
+    container_name: redis-stack
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540"
+    restart: unless-stopped
+
+  redis-cli:
+    image: redis:latest
+    container_name: redis-cli
+    entrypoint: redis-cli -h redis-stack
+    depends_on:
+      - redis-stack
+    stdin_open: true
+    tty: true
+
+volumes:
+  redis_data:
